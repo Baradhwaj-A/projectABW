@@ -1,46 +1,30 @@
-import java.util.Scanner;
-public class sum {
-
-    public static void main(String[] args) {
-        Scanner scanner=new Scanner(System.in);
-         System.out.print("Enter a number (must be 3 or greater): ");
-        int targetSum = scanner.nextInt();
-        
-        if (targetSum < 3) {
-            System.out.println("Error: Input must be 3 or greater.");
-            return;
-        }
-        
-        // Generate Fibonacci numbers until the largest number is greater than or equal to targetSum
-        int[] fib = new int[targetSum + 1];
-        fib[0] = 0;
-        fib[1] = 1;      
-        int count = 2;
-        while (true) {
-            int nextFib = fib[count - 1] + fib[count - 2];
-            if (nextFib > targetSum) {
-                break;
-            }
-            fib[count] = nextFib;
-            count++;
-        }
-        // Now find three Fibonacci numbers that sum to targetSum
-        boolean found = false;
-        for (int i = 0; i < count; i++) {
-            for (int j = i; j < count; j++) {
-                for (int k = j; k < count; k++) {
-                    if (fib[i] + fib[j] + fib[k] == targetSum) {
-                        System.out.printf("%d = %d + %d + %d\n", targetSum, fib[i], fib[j], fib[k]);
-                        found = true;
+public class SudokuSolver {
+    boolean solve(int[][] board) {
+        for (int row = 0; row < 9; row++) {
+            for (int col = 0; col < 9; col++) {
+                if (board[row][col] == 0) {
+                    for (int num = 1; num <= 9; num++) {
+                        if (isValid(board, row, col, num)) {
+                            board[row][col] = num;
+                            if (solve(board)) return true;
+                            board[row][col] = 0; // Backtrack
+                        }
                     }
+                    return false;
                 }
             }
         }
-        if (!found) {
-            System.out.println("No three Fibonacci numbers found that sum to " + targetSum);
+        return true;
+    }
+    
+    boolean isValid(int[][] board, int row, int col, int num) {
+        // Check row, column & 3x3 box
+        for (int i = 0; i < 9; i++) {
+            if (board[row][i] == num || board[i][col] == num || 
+                board[3*(row/3)+i/3][3*(col/3)+i%3] == num) {
+                return false;
+            }
         }
+        return true;
     }
 }
-
-
-
